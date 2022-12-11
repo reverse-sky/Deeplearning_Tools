@@ -3,15 +3,15 @@
 사용 
 
 ```python
-criterion = nn.CrossEntropyLoss() #cut mix를 사용하지 않을 때 쓰는 criterion
-CMcriterion = CutMixCriterion() # CUtmix를 사용할 때의 criterion
+criterion = nn.CrossEntropyLoss() # criterion when the probability lower than 0.5
+CMcriterion = CutMixCriterion() # criterion when the probabiliry over the 0.75
 ...
 for e in range(0, n_epochs):
     for data, labels in tqdm(train_loader):
-        rand_num = np.random.rand() #난수 생성  0~1사이의 probability
+        rand_num = np.random.rand() # Create the Random Numver between 0~1, then it will be probability
 
-        if rand_num > 0.75: data, (target1, target2, lam) = cutmix(data, labels) #1/4확률로 cutmix를 사용하고, 
-        elif rand_num > 0.5:  # 1/2의 확률로 mixup을 사용  if문 에 따라서 둘중 하나만 사용이 됨 
+        if rand_num > 0.75: data, (target1, target2, lam) = cutmix(data, labels) # Using the Cutmix if probability is bigger than 0.75 
+        elif rand_num > 0.5:  # Or using the mixup when over the 1/2 probability 
             data, target1, target2, lam = mixup_data(data, labels)
             data, target1, target2 = map(Variable, (data, target1, target2))
 
