@@ -7,3 +7,6 @@
 > Cutmix ,Mixup 사용법
 ### - <a href="./Knowledge distillation/">Knowledge distillation</a>
 > Knowledge distillation 기법에 대한 사용법 정리 
+
+### - <a href="./Dataloader/">Dataloader</a>
+
