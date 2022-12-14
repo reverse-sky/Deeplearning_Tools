@@ -31,9 +31,9 @@ criterion = nn.CrossEntropyLoss()
   student_model.train()
   for data,labels in train_loader:
     optimizer.zero_grad()
-    teacher_outputs = teacher_model(data)
-    student_outputs = student_model(data)
-    total_loss = knowledge_distillation_loss(teacher_outputs,student_outputs,labels,criterion)
+    teacher_logits = teacher_model(data)
+    student_logits = student_model(data)
+    total_loss = knowledge_distillation_loss(teacher_logits,student_logits,labels,criterion)
     total_loss.backward()  #backpropagation about the total loss
     ## Student models are updated according to rules 
     ##that reduce losses between teacher and student output.
