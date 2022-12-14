@@ -1,6 +1,6 @@
 # Deeplearning_Tools
 
-사용 
+## Deeplearning을 진행할 때, 자주 사용하는 toolkit or 기법을 정리하는 repository입니다. 
 
 ### - <a href="./Augmentation/">Augmentation</a>
 > ####  Augmentation에 대한 정리 
