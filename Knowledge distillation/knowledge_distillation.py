@@ -54,6 +54,10 @@ def knowledge_distillation_train(teacher_model,student_model,loader,device,crite
 
 
 def knowledge_distillation_val(teacher_model,student_model,loader,device,criterion,optimizer,display = True,amp= True):
+    ```의문 사항 ,validation은 total loss를 사용해서 구하는 것이 맞는가? 아니면 
+    corss entropy만을 사용하여 stduent model에 대한 validation loss를 구하는 것이 맞는가? 
+    목적을 생각해보면 label을 맞추는 것이 맞기에 student모델에 대한 loss만 구하면 될 것 같은데 잘 모르겠습니다.
+    ```
     val_loss = []
     val_acc  = []
     LOGITS = []
