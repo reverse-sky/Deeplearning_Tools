@@ -60,8 +60,8 @@ def knowledge_distillation_val(teacher_model,student_model,loader,device,criteri
     PROBS = []
     TARGETS = []
     scaler =  GradScaler()
-    # teacher_model.to(device)
-    # student_model.to(device)
+    teacher_model.to(device)
+    student_model.to(device)
 
     if display:
         bar = tqdm(loader)
