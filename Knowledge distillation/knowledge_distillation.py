@@ -103,3 +103,5 @@ def knowledge_distillation_val(teacher_model,student_model,loader,device,criteri
     val_loss = np.mean(val_loss)
     # val_acc = np.mean(val_acc)
     return val_loss, val_acc ,PROBS,TARGETS  
+
+
