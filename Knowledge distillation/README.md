@@ -28,7 +28,7 @@ import knowledge_distillation
 criterion = nn.CrossEntropyLoss()
 ...
   teacher_model.eval() # Student model의 train과정에서 teacher모델은 이미 학습이 완료된 상태, 학습을 진행하면 안된다. 
-  student_mdoel.train()
+  student_model.train()
   for data,labels in train_loader:
     optimizer.zero_grad()
     teacher_outputs = teacher_model(data)
