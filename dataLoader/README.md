@@ -20,7 +20,7 @@ class CacheDataset(BaseDataset):
         path = self.img_paths[index]
         image  = self.imread_cache(path)
         if self.transform is not None:
-            # image = self.transform(image)              #torchvision ver.
+            # image = self.transform(image)              #torchvision ver. torchvision을 사용하려면 밑의 imread_cache를 PIL로 
             image = self.transform(image=image)['image'] #Albumentation ver.
         if self.labels is not None:
             label = self.labels[index]
