@@ -13,13 +13,16 @@ class BaseDataset(Dataset):
         self.use_caching = use_caching
     def __len__(self)->int:
         return len(self.img_paths)
-class CacheDataset(BaseDataset): #baseDataset을 상속 , 이렇게 작성하는것은 Base Dataset이 일반적으로 자주 사용하는 형태이기 때문 = interface 개념 
+class CacheDataset(BaseDataset):
+    ``` baseDataset을 상속 , 이렇게 작성하는것은 
+    Base Dataset이 일반적으로 자주 사용하는 형태이기 때문 = interface 개념
+    ```
     def __getitem__(self,index):
         path = self.img_paths[index]
         image  = self.imread_cache(path)
         if self.transform is not None:
-            # image = self.transform(image) #torchvision version
-            image = self.transform(image=image)['image'] #Albumentation ver
+            # image = self.transform(image)              #torchvision ver.
+            image = self.transform(image=image)['image'] #Albumentation ver.
         if self.labels is not None:
             label = self.labels[index]
             return image, label
