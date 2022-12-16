@@ -53,10 +53,8 @@ def knowledge_distillation_train(teacher_model,student_model,loader,device,crite
 
 
 
-def knowledge_distillation_val(teacher_model,student_model,loader,device,criterion,optimizer,display = True,amp= True):
-    ```의문 사항 ,validation은 total loss를 사용해서 구하는 것이 맞는가? 아니면 
-    corss entropy만을 사용하여 stduent model에 대한 validation loss를 구하는 것이 맞는가? 
-    목적을 생각해보면 label을 맞추는 것이 맞기에 student모델에 대한 loss만 구하면 될 것 같은데 잘 모르겠습니다.
+def knowledge_distillation_val(student_model,loader,device,criterion,optimizer,display = True,amp= True):
+    ```validation은 student model만을 사용하여 loss를 구함
     ```
     val_loss = []
     val_acc  = []
@@ -64,24 +62,24 @@ def knowledge_distillation_val(teacher_model,student_model,loader,device,criteri
     PROBS = []
     TARGETS = []
     scaler =  GradScaler()
-    teacher_model.to(device)
+    #teacher_model.to(device)
     student_model.to(device)
 
     if display:
         bar = tqdm(loader)
     else:
         bar = loader
-    teacher_model.eval()
+    #teacher_model.eval()
     student_model.eval()
     with torch.no_grad():
         for i, (data,target) in enumerate(bar):
             optimizer.zero_grad()
             data,target = data.to(device),target.to(device)
             with autocast():    
-                teacher_logits = teacher_model(data)
+                #teacher_logits = teacher_model(data)
                 student_logits = student_model(data)
-                total_loss = knowledge_distillation_loss(teacher_logits,student_logits,target,criterion)
-            
+                #total_loss = knowledge_distillation_loss(teacher_logits,student_logits,target,criterion)
+                loss = criterion(student_logits,target)
             probs = student_logits.softmax(dim =1)                         # 다중분류 -> 각 클래스일 확률을 전체 1로 두고 계산하기
 
             LOGITS.append(student_logits.detach().cpu())
@@ -93,7 +91,7 @@ def knowledge_distillation_val(teacher_model,student_model,loader,device,criteri
             equals = top_class==target.reshape(top_class.shape)
 
             
-            val_loss.append(total_loss.detach().cpu().numpy())
+            val_loss.append(loss.detach().cpu().numpy())
             val_acc.append(torch.mean(equals.type(torch.float)).detach().cpu())
             
             if display:bar.set_description('Valid Loss: {:.5f} \tAcc: {:.5f}'.format(np.mean(val_loss),(np.mean(val_acc))))    
