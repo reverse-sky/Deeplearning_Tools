@@ -13,7 +13,7 @@ class BaseDataset(Dataset):
         self.use_caching = use_caching
     def __len__(self)->int:
         return len(self.img_paths)
-class CacheDataset(BaseDataset):
+class CacheDataset(BaseDataset): #baseDataset을 상속 , 이렇게 작성하는것은 Base Dataset이 일반적으로 자주 사용하는 형태이기 때문 = interface 개념 
     def __getitem__(self,index):
         path = self.img_paths[index]
         image  = self.imread_cache(path)
@@ -27,7 +27,7 @@ class CacheDataset(BaseDataset):
             return image        
         
         
-    def imread_cache(self,path):
+    def imread_cache(self,path):          #cache 값을 가지고 오는 함수 
         img = self.cache.get(path, None)  #cache에 들어있다면, 가지고 오지만 없으면 None을 return
         if img is None:                   #cache값이 None이라면, 
             img = cv2.imread(path)        #imread로 읽고 , cv2가 PIL보다 빠르고 tool도 더 많다.
