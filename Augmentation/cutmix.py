@@ -47,7 +47,7 @@ def segmentation_cutmix(data,mask,alpha = 1.0):
     lambda_prob = np.random.beta(alpha, alpha)       # Chose beta distribution value
 
     ########### cutmix start 
-    image_h, image_w = data.shape[2:]                 
+    image_w, image_h = data.shape[2:]                 
     r_x = np.random.uniform(0, image_w) 
     r_y = np.random.uniform(0, image_h)
     r_w = image_w * np.sqrt(1 - lambda_prob)
