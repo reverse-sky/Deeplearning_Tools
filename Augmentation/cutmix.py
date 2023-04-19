@@ -3,34 +3,64 @@ import numpy as np
 import torch.nn as nn
 
 class CutMixCriterion:
-    def __init__(self):
-        self.criterion = nn.CrossEntropyLoss().to(device)
+    def __init__(self, criterion = nn.CrossEntropyLoss(),device='cpu'):
+        self.criterion = criterion.to(device)
 
-    def __call__(self, preds, targets):
-        targets1, targets2, lam = targets
-        return lam * self.criterion(preds, targets1) + (1 - lam) * self.criterion(preds, targets2)
-      
-def cutmix(data, targets, alpha=1.0):
-    '''
-    alpha 값을 1.0으로 설정하여 beta 분포가 uniform distribution이 되도록함, 
-    두 이미지를 랜덤하게 combine하는 Cutmix
-    '''
-    indices = torch.randperm(data.size(0))
-    shuffled_data = data[indices]
-    shuffled_targets = targets[indices]
-    lam = np.random.beta(alpha, alpha)
-
-    image_h, image_w = data.shape[2:]
-    cx = np.random.uniform(0, image_w)
-    cy = np.random.uniform(0, image_h)
-    w = image_w * np.sqrt(1 - lam)
-    h = image_h * np.sqrt(1 - lam)
-    x0 = int(np.round(max(cx - w / 2, 0)))
-    x1 = int(np.round(min(cx + w / 2, image_w)))
-    y0 = int(np.round(max(cy - h / 2, 0)))
-    y1 = int(np.round(min(cy + h / 2, image_h)))
-
-    data[:, :, y0:y1, x0:x1] = shuffled_data[:, :, y0:y1, x0:x1]
-    targets = (targets, shuffled_targets, lam)
+    def __call__(self, preds, targets):   # __call__는 instance가 실행되었을 때 진행하는 함수 
+        
+        return self.criterion(preds,targets)
     
-    return data, targets
+
+def cutmix(data,targets,alpha = 1.0):
+    cut_data    = data.clone()  # if data is numpy, use copy()
+    cut_targets = targets.clone()
+    ##### cutmix start
+    indices     = torch.randperm(data.size(0))           # shuffle index  
+    shuffled_data    = cut_data[indices]                     # shuffle dataset 
+    shuffled_targets = cut_targets[indices]                     # shuffle dataset  
+    lambda_prob = np.random.beta(alpha, alpha)       # Chose beta distribution value
+
+    ########### cutmix start 
+    image_h, image_w = data.shape[2:]                 
+    r_x = np.random.uniform(0, image_w) 
+    r_y = np.random.uniform(0, image_h)
+    r_w = image_w * np.sqrt(1 - lambda_prob)
+    r_h = image_h * np.sqrt(1 - lambda_prob)
+    x1  =  int(np.clip((r_x - r_w)/2, a_min=0,a_max=image_w))
+    x2  =  int(np.clip((r_x + r_w)/2, a_min=0,a_max=image_w))
+    y1  =  int(np.clip((r_y - r_h)/2, a_min=0,a_max=image_h))
+    y2  =  int(np.clip((r_y + r_h)/2, a_min=0,a_max=image_h))
+    cut_data[:,:,x1:x2,y1:y2]    = shuffled_data[:,:,x1:x2,y1:y2]    # cutmix data
+    ########### cut mix end
+    
+    lamb = 1-(x2-x1)*(y2-y1)/(image_w*image_h)   # calculate label_ratio 
+    cut_targets = lamb*targets + (1-lamb)*cut_targets  # calculate  
+    return cut_data, cut_targets
+
+def segmentation_cutmix(data,mask,alpha = 1.0):
+    cut_data    = data.clone()  # if data is numpy, use copy()
+    cut_mask    = mask.clone()
+    ##### cutmix start
+    indices     = torch.randperm(data.size(0))           # shuffle index  
+    shuffled_data       = cut_data[indices]                     # shuffle dataset 
+    shuffled_targets    = cut_mask[indices]                     # shuffle dataset  
+    lambda_prob = np.random.beta(alpha, alpha)       # Chose beta distribution value
+
+    ########### cutmix start 
+    image_h, image_w = data.shape[2:]                 
+    r_x = np.random.uniform(0, image_w) 
+    r_y = np.random.uniform(0, image_h)
+    r_w = image_w * np.sqrt(1 - lambda_prob)
+    r_h = image_h * np.sqrt(1 - lambda_prob)
+    x1  =  int(np.clip((r_x - r_w)/2, a_min=0,a_max=image_w))
+    x2  =  int(np.clip((r_x + r_w)/2, a_min=0,a_max=image_w))
+    y1  =  int(np.clip((r_y - r_h)/2, a_min=0,a_max=image_h))
+    y2  =  int(np.clip((r_y + r_h)/2, a_min=0,a_max=image_h))
+    cut_data[:,:,x1:x2,y1:y2] = shuffled_data[:,:,x1:x2,y1:y2]    # cutmix data
+    cut_mask[:,:,x1:x2,y1:y2] = shuffled_targets[:,:,x1:x2,y1:y2] # cutmix mask 
+    ########### cut mix end
+
+    lamb = 1-(x2-x1)*(y2-y1)/(image_w*image_h)
+    # aug_targets = lamb*mask + (1-lamb)*cut_mask  # not doing in segmentation task 
+    return cut_data, cut_mask
+
