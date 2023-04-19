@@ -7,7 +7,7 @@
 just add the cut out or mixup code according to probability
 """
 
-criterion = nn.CrossEntropyLoss() # define loss function
+criterion = nn.CrossEntropyLoss() # criterion when the probability lower than 0.5
 ...
 for e in range(0, n_epochs):
     for data, labels in tqdm(train_loader):
@@ -26,6 +26,5 @@ for e in range(0, n_epochs):
         
         # if prob > 0.5: loss = CMcriteion(outputs,labels)
         # else: loss = criterion(outputs,labels)
-
 
 ```
