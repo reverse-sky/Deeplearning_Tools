@@ -2,13 +2,13 @@ import torch
 import numpy as np
 import torch.nn as nn
 
-class CutMixCriterion:
-    def __init__(self, criterion = nn.CrossEntropyLoss(),device='cpu'):
-        self.criterion = criterion.to(device)
+# class CutMixCriterion:
+#     def __init__(self, criterion = nn.CrossEntropyLoss(),device='cpu'):
+#         self.criterion = criterion.to(device)
 
-    def __call__(self, preds, targets):   # __call__는 instance가 실행되었을 때 진행하는 함수 
+#     def __call__(self, preds, targets):   # __call__는 instance가 실행되었을 때 진행하는 함수 
         
-        return self.criterion(preds,targets)
+#         return self.criterion(preds,targets)
     
 
 def cutmix(data,targets,alpha = 1.0):
