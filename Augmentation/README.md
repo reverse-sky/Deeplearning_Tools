@@ -13,9 +13,10 @@ for e in range(0, n_epochs):
     for data, labels in tqdm(train_loader):
         prob = np.random.rand() # Create the Random Numver between 0~1, then it will be probability
 
-        if prob > 0.75: data, label= cutmix(data, labels) # Using the Cutmix if probability is bigger than 0.75 
-        elif prob > 0.5:  # Or using the mixup when over the 1/2 probability 
-            data, label= mixup(data, labels)
+        # Using the Cutmix if probability is bigger than 0.75 
+        if prob > 0.75: data, label= cutmix(data, labels) 
+        # Or using the mixup when over the 1/2 probability
+        elif prob > 0.5: data, label= mixup(data, labels)
                 
         data,labels = data.to(device),labels.to(device)
         
