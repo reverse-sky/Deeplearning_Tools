@@ -1,15 +1,12 @@
 import torch
-import torch.nn as nn
 import numpy as np
+import random
 
-def mixup_data(x, y, alpha=1.0, use_cuda=True):
-    '''Returns mixed inputs, pairs of targets, and lambda'''
-    if alpha > 0: lam = np.random.beta(alpha, alpha)
-    else: lam = 1
-
-    if use_cuda: index = torch.randperm(x.size()[0]).cuda()
-    else: index = torch.randperm(x.size()[0])
-
-    mixed_x = lam * x + (1 - lam) * x[index, :]
-    y_a, y_b = y, y[index]
-    return mixed_x, y_a, y_b, lam
+def mixup(data, targets, alpha=1.):
+    indices = torch.randperm(data.size(0))  # Shuffle index
+    shuffled_data    = data[indices].clone()        # 
+    shuffled_targets = targets[indices].clone()     # 
+    lam = np.random.beta(alpha, alpha)      #
+    mixed_data = lam * data + (1 - lam) * shuffled_data # mix data
+    mixed_targets = lam * targets + (1 - lam) * shuffled_targets
+    return mixed_data, mixed_targets
